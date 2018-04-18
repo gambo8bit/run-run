@@ -97,6 +97,7 @@ public class GameManager : MonoBehaviour
 
             case STEP.START:
                 {
+                    //Start(GUI)표시 띄우기 위한 지정시간이 지났으면 게임진행으로 넘어감
                     if (stepTimer > startTime)
                         stepNext = STEP.GAME;
                 }
@@ -104,6 +105,7 @@ public class GameManager : MonoBehaviour
 
             case STEP.GAME:
                 {
+                    //적이 지정한 값만큼 생성됬는지 체크해서 게임을 종료단계로 진행시킴
                     if (enemycompleteCount >= enemyCreateNumMax)
                         stepNext = STEP.ENEMY_VANISH_WAIT; 
                 }
@@ -111,28 +113,44 @@ public class GameManager : MonoBehaviour
 
             case STEP.ENEMY_VANISH_WAIT:
                 {
-                    do
-                    {
+                    //EnemyGroup이 전부 사라지기전까진 다음 진행으로 넘어가지 않음
+                    if (GameObject.FindGameObjectsWithTag("EnemyGroup").Length > 0)
+                        break;
 
-                    }while()
+                    //플레이어가 어느정도 속도가 붙을때까지 다음 진행으로 넘어가지않음
+                    if (player.GetSpeedRate() < 0.5f)
+                        break;
+
+                    //위에 두 조건에 걸리지 않았다면 다음 진행으로 넘어감
+                    stepNext = STEP.LAST_RUN;
                 }
                 break;
 
             case STEP.LAST_RUN:
                 {
-
+                    //종료 지점까지 마지막 달리기(해당 스텝이 시작된지 2초 경과후 다음 스텝으로 이동)
+                    if(stepTimer > 2.0f)
+                    {
+                        stepNext = STEP.PLAYER_STOP_WAIT;
+                    }
                 }
                 break;
 
             case STEP.PLAYER_STOP_WAIT:
                 {
-
+                    //플레이어 정지됬다면 목표 성공 연출 시작
+                    if (player.IsStopped())
+                    {
+                        //게임 목표 성공 연출
+                        stepNext = STEP.GOAL;
+                    }
                 }
                 break;
 
             case STEP.GOAL:
                 {
-
+                    //temp
+                    stepNext = STEP.GOTO_TITLE;
                 }
                 break;
 
@@ -150,7 +168,7 @@ public class GameManager : MonoBehaviour
 
             case STEP.GOTO_TITLE:
                 {
-
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(""); //타이틀 씬으로 ㄱ
                 }
                 break;
 
@@ -173,8 +191,19 @@ public class GameManager : MonoBehaviour
                 case STEP.LAST_RUN:
                     break;
                 case STEP.PLAYER_STOP_WAIT:
+                    {
+                        //플레이어를 정지시킨다.
+                        player.StopRequest();
+
+                        //DumpEnemy GameObject 생성(Effect)
+                    }
                     break;
                 case STEP.GOAL:
+                    {
+                        //목표 지점 연출 시작
+
+                        //Enemy가 화면 위에서 날아오듯 생성하는 Generator 생성
+                    }
                     break;
                 case STEP.RESULT:
                     break;
@@ -186,7 +215,7 @@ public class GameManager : MonoBehaviour
                     break;
             }
 
-            //StepNext가 NONE이 아닐때만 실행한다는거 유의(즉 StepCurrent 실행을 완료해야 타이머 리셋)
+            //StepNext가 NONE이 아닐때만 실행한다는거 유의(즉 StepCurrent 실행을 완료하여 stepNext를 넘겨받았을때만 타이머 리셋)
             stepCurrent = stepNext;
             stepNext = STEP.NONE;
 
@@ -194,6 +223,7 @@ public class GameManager : MonoBehaviour
 
         }
 
+        //현재 진행상태가 게임상태면 계속하여 Enemy생성해도 되는지 체크 
         if (stepCurrent == STEP.GAME)
             levelControl.CheckCreate();
 

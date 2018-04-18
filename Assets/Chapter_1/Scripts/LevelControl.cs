@@ -60,9 +60,60 @@ public class LevelControl : MonoSingleton<LevelControl>
         this.enemySpawnLine = this.player.transform.position.x - 1.0f;
     }
 
+    bool bCanCreateEnemy = false;
+
+
 
     public void CheckCreate()
     {
+        if (!bCanCreateEnemy) 
+        {
+
+            //생성 타이밍 플래그가 거짓이면 노멀AI일때와 특별패턴일때를 구분해서 각각 조건에 맞으면 생성명령 플래그를 TRUE로 한다
+            if (isNormalAI())
+            {
+                bCanCreateEnemy = true;
+            }
+            else
+            {
+                //NormalAI가 아닌 즉 특별패턴AI일 경우는 화면에서 EnemyGroup이 하나도 없을때까지 기다리고서 생성진행한다.
+                if (GameObject.FindGameObjectsWithTag("EnemyGroup").Length == 0)
+                    bCanCreateEnemy = true;
+            }
+
+
+            //Enemy발생할 준비가 되면, 플레이어의 현재 위치에서 Enemy의 출현 위치를 계산
+            if (bCanCreateEnemy)
+            {
+
+            }
+
+        }
+
+    }
+
+    public bool isNormalAI()
+    {
+        bool bIsNormalType;
+
+        do
+        {
+            bIsNormalType = false;
+
+            if (groupType == eGroupType.DECELERATE)
+                break;
+
+            if (groupType == eGroupType.PASSING)
+                break;
+
+            if (groupType == eGroupType.SLOW)
+                break;
+
+            bIsNormalType = true;
+
+        } while (false);
+
+        return bIsNormalType;
 
     }
 

@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 public class Ch1_Player : MonoBehaviour
 {
@@ -46,6 +48,7 @@ public class Ch1_Player : MonoBehaviour
     public ePlayerAIState playerAI = ePlayerAIState.NONE;
     public ePlayerAIState nextAI = ePlayerAIState.NONE;
     
+    bool bIsRunning = true;
     
     // Use this for initialization
 	void Start ()
@@ -53,6 +56,12 @@ public class Ch1_Player : MonoBehaviour
        playerAnimator = GetComponentInChildren<Animator>();
 	}
 	
+
+    public float GetSpeedRate()
+    {
+       float speedRate = Mathf.InverseLerp(0f, maxSpeed, GetComponent<Rigidbody>().velocity.magnitude);
+        return speedRate;
+    }
 	// Update is called once per frame
 	void Update ()
     {
@@ -80,4 +89,27 @@ public class Ch1_Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W))
             transform.position += Vector3.right * 10000;
 	}
+
+    public void StopRequest()
+    {
+        bIsRunning = false; 
+    }
+
+    public bool IsStopped()
+    {
+        bool bIsStopped = false;
+
+        do
+        {
+            if (bIsRunning) //달리고 있다면 false 인 bIsStopped 반환
+                break;
+
+            if (moveSpeed > 0.0f) //속도가 0 보다 크다면 멈춘게 아니다
+                break;
+
+            bIsStopped = true; // 위의 두 조건 다 만족하지않으면 멈췄다고 할수있다
+        } while (false);
+
+        return (bIsStopped);
+    }
 }
