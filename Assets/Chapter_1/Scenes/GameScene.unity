@@ -177,6 +177,11 @@ MonoBehaviour:
   stepNext: -1
   stepTimer: 0
   stepTimerPrev: 0
+  enemyGroupCreateNumMax: 50
+  enemyCreateNumMax: 10
+  enemycompleteCount: 0
+  enemyKillCount: 0
+  enemyMissCount: 0
 --- !u!4 &515893349
 Transform:
   m_ObjectHideFlags: 0
@@ -303,7 +308,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4380667442177856, guid: bd8ea9de0de2ea745863e9f5529d8c3c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4380667442177856, guid: bd8ea9de0de2ea745863e9f5529d8c3c, type: 2}
       propertyPath: m_LocalPosition.y

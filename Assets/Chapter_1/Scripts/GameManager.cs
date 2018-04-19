@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoSingleton<GameManager>
 { 
     //===========프리팹==================
     public  GameObject enemyGroupPrefab;
@@ -44,15 +44,20 @@ public class GameManager : MonoBehaviour
     public const float startTime = 2.0f;
 
     //EnemyGroup의 최대 생성 수 (도달하면 게임이 종료)
-    public int enemyGroupCreateNumMax = 50;
+    public int enemyGroupCreateMax = 50;
 
     //Group안의 Enemy의 갯수 최대
     public int enemyCreateNumMax = 10;
 
+    //EnemyGroup의 출현수
+    public int enemyGroupCount = 0;
+
+
+
     //공격한 or 부딪힌 EnemyGroup 의 수
-    public int enemycompleteCount = 0;
-    public int enemyKillCount = 0;
-    public int enemyMissCount = 0;
+    public int enemycompleteCount = 0; //생성수
+    public int enemyKillCount = 0; //죽인수
+    public int enemyMissCount = 0; //못잡은수
 
 
     void Start()
@@ -129,6 +134,7 @@ public class GameManager : MonoBehaviour
             case STEP.LAST_RUN:
                 {
                     //종료 지점까지 마지막 달리기(해당 스텝이 시작된지 2초 경과후 다음 스텝으로 이동)
+
                     if(stepTimer > 2.0f)
                     {
                         stepNext = STEP.PLAYER_STOP_WAIT;

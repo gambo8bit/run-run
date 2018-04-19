@@ -61,8 +61,8 @@ public class LevelControl : MonoSingleton<LevelControl>
     }
 
     bool bCanCreateEnemy = false;
-
-
+    float startSpawnLine = 0f;
+    float nextSpawnLine = 40f;
 
     public void CheckCreate()
     {
@@ -82,13 +82,33 @@ public class LevelControl : MonoSingleton<LevelControl>
             }
 
 
-            //Enemy발생할 준비가 되면, 플레이어의 현재 위치에서 Enemy의 출현 위치를 계산
+            //Enemy발생할 준비가 되면, 플레이어가 지나가면 Enemy생성을 시작할 지점을 계산
             if (bCanCreateEnemy)
             {
-
+                startSpawnLine = player.transform.position.x + nextSpawnLine;    
             }
 
+
+            //플레이어가 startSpawnLine을 지나면 EnemyGroup 생성을 시작
+
+            do
+            {
+                //이미 Enemy 최대제한 생성Count 만큼 생성했다면 실행 x
+                if (gameManager.enemyGroupCount >= gameManager.enemyGroupCreateMax)
+                    break;
+
+
+
+            } while (false);
+
+
+
+
+
+
         }
+
+
 
     }
 
