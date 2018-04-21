@@ -38,7 +38,7 @@ public class LevelControl : MonoSingleton<LevelControl>
         SLOW = 0,   //달리는 속도가 느림
         DECELERATE, //가속 -> 감속
         PASSING,    //두 개의 그룹으로 추적
-        RAPID,      //짧은 간격으로
+        RAPID,      //짧은 간격으로 연속 생성(생성간격을 제외하고는 NORMAL과 같음)
         NORMAL,     //보통
         NUM
     };
@@ -91,11 +91,18 @@ public class LevelControl : MonoSingleton<LevelControl>
             }
 
 
-            //Enemy발생할 준비가 되면, 플레이어가 지나가면 Enemy생성을 시작할 지점을 계산
+            //Enemy 생성을 명령할 지점 설정
             if (bCanCreateEnemy)
             {
-                startSpawnLine = player.transform.position.x + nextSpawnLine;    
+                if (groupType == eGroupType.NORMAL) 
+                startSpawnLine = player.transform.position.x + nextSpawnLine;
+                else //특별 패턴은 빠른 간격으로 생성
+                    startSpawnLine = player.transform.position.x + LevelControl.SPWAN_MARGIN_MIN * 0.5f;
             }
+                
+                
+
+
 
 
             //플레이어가 startSpawnLine을 지나면 EnemyGroup 생성을 시작
@@ -180,15 +187,18 @@ public class LevelControl : MonoSingleton<LevelControl>
             if(normalCount <= 0)
             {
                 eventType = (eGroupType)Random.Range(0, 3);
-
+                int runNum = (int)Random.Range(1,2);
                 switch (eventType)
                 {
+                        //eventCount가 곧 특별패턴 루프 횟수
                     case eGroupType.SLOW:
-                        eventCount = 1;
+                        eventCount = runNum;
                         break;
                     case eGroupType.DECELERATE:
+                        eventCount = runNum;
                         break;
                     case eGroupType.PASSING:
+                        eventCount = runNum;
                         break;
                     case eGroupType.RAPID:
                         eventCount = Random.Range(2, 4);
@@ -207,7 +217,7 @@ public class LevelControl : MonoSingleton<LevelControl>
 
             rate = Mathf.Clamp01(rate);
 
-            normalEnemySpeed = Mathf.Lerp(EnemyGroup.SPEEDMAX, EnemyGroup.SPEEDMIN, rate); //normal Type 의 속도(콤보시 점점 느려짐)
+            normalEnemySpeed = Mathf.Lerp(EnemyGroup.SPEEDMAX, EnemyGroup.SPEEDMIN, rate); //normal Type 의 속도(콤보시 점점 느려짐 -> 플레이어에게 더 빨리 다가옴)
 
             nextSpawnLine = Mathf.Lerp(LevelControl.SPAWN_MARGIN_MAX, LevelControl.SPWAN_MARGIN_MIN, rate); //생성되는 간격(콤보시 점점 좁아짐)
 
@@ -224,21 +234,49 @@ public class LevelControl : MonoSingleton<LevelControl>
     {
         switch (groupType)
         {
-            case eGroupType.NONE:
-                break;
             case eGroupType.SLOW:
+                {
+                    Vector3 spawnPos = player.transform.position;
+                    spawnPos.x += spawnMargin;
+                    
+                    CreateEnemyGroup(spawnPos, EnemyGroup.SPEEDMIN, EnemyGroup.eAIState.NORMAL);
+                }
                 break;
             case eGroupType.DECELERATE:
+                {
+                    Vector3 spawnPos = player.transform.position;
+                    spawnPos.x += spawnMargin;
+                    CreateEnemyGroup(spawnPos, EnemyGroup.SPEEDMAX, EnemyGroup.eAIState.DECELERATE);
+                }
                 break;
             case eGroupType.PASSING:
+                {
+                    float speedLow = 2.0f;
+                    float speedRate = 2.0f;
+                    float playerVelocityX = player.GetComponent<Rigidbody>().velocity.x;
+                    //speedHigh는 speedRate가 1일때 speedLow랑 같고 크면 클수록 속도가 빨라진다(but player속도보단 항상 작음)
+                    float speedHigh = playerVelocityX - ((playerVelocityX - speedLow) / speedRate);
+
+                    
+
+                }
                 break;
             case eGroupType.RAPID:
+                {
+                    Vector3 spawnPos = player.transform.position;
+                    spawnPos.x += spawnMargin;
+                    CreateEnemyGroup(spawnPos, normalEnemySpeed, EnemyGroup.eAIState.NORMAL);
+                }
                 break;
             case eGroupType.NORMAL:
-                break;
-            case eGroupType.NUM:
+                {
+                    Vector3 spawnPos = player.transform.position;
+                    spawnPos.x += spawnMargin;
+                    CreateEnemyGroup(spawnPos, speed, EnemyGroup.eAIState.NORMAL);
+                }
                 break;
         }
+
     }
 
         public bool isNormalAI()
