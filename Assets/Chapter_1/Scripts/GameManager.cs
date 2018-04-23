@@ -79,6 +79,7 @@ public class GameManager : MonoSingleton<GameManager>
         mainCamera = Camera.main.gameObject;
 
         levelControl = LevelControl.Instance;
+        levelControl.enemyPrefabs = enemyPrefabs;
         levelControl.gameManager = this;
         levelControl.player = player;
         levelControl.enemyGroupPrefab = enemyGroupPrefab;

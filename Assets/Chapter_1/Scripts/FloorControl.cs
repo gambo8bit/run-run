@@ -7,18 +7,18 @@ public class FloorControl : MonoBehaviour
     public float floorWidth;
     public static int modelNum = 3;
    public GameObject Player;
-    void Start ()
+    public float totalWidth;
+    private void Awake()
     {
-       
         //스케일 1 일때 좌표크기로 10 이니깐 스케일 크기 * 10 하면 맵 한섹션의 크기
-        floorWidth = this.transform.lossyScale.x * 10;	
-	}
-	
-	
-	void Update ()
+        floorWidth = this.transform.lossyScale.x * 10;
+        totalWidth = floorWidth * modelNum;
+    }
+
+    void Update ()
     {
         //맵의 전체 너비( 1 루프 크기)
-        float totalWidth = floorWidth * modelNum;
+        totalWidth = floorWidth * modelNum;
 
         //현재 위치
         Vector3 thisFloorPos = this.transform.position;

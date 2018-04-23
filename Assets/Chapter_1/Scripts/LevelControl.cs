@@ -16,6 +16,7 @@ public class LevelControl : MonoSingleton<LevelControl>
 
     public GameObject mainCamera = null;
 
+    public GameObject[] enemyPrefabs;
     //도깨비 발생위치(플레이어의 x좌표가 기준선을 넘으면 플레이어의 앞쪽에 도깨비 출현 시키도록)
     public float enemySpawnLine;
 
@@ -73,9 +74,11 @@ public class LevelControl : MonoSingleton<LevelControl>
     float startSpawnLine = 0f;
     float nextSpawnLine = 40f;
 
+
+
     public void CheckCreate()
     {
-        if (!bCanCreateEnemy) 
+        if (!bCanCreateEnemy)
         {
 
             //생성 타이밍 플래그가 거짓이면 노멀AI일때와 특별패턴일때를 구분해서 각각 조건에 맞으면 생성명령 플래그를 TRUE로 한다
@@ -94,14 +97,14 @@ public class LevelControl : MonoSingleton<LevelControl>
             //Enemy 생성을 명령할 지점 설정
             if (bCanCreateEnemy)
             {
-                if (groupType == eGroupType.NORMAL) 
-                startSpawnLine = player.transform.position.x + nextSpawnLine;
+                if (groupType == eGroupType.NORMAL)
+                    startSpawnLine = player.transform.position.x + nextSpawnLine;
                 else //특별 패턴은 빠른 간격으로 생성
                     startSpawnLine = player.transform.position.x + LevelControl.SPWAN_MARGIN_MIN * 0.5f;
             }
-                
-                
 
+
+        }
 
 
 
@@ -158,11 +161,11 @@ public class LevelControl : MonoSingleton<LevelControl>
 
 
 
-        }
-
-
-
     }
+
+
+
+    
 
     private void SelectNextGroup()
     {
@@ -201,7 +204,7 @@ public class LevelControl : MonoSingleton<LevelControl>
                         eventCount = runNum;
                         break;
                     case eGroupType.RAPID:
-                        eventCount = Random.Range(2, 4);
+                        eventCount = Random.Range(2, 4); //RAPID 방식은 여러Enemy가 잇달아 나오는거기에 2번이상 실행
                         break;
                 }
             }
@@ -257,8 +260,18 @@ public class LevelControl : MonoSingleton<LevelControl>
                     //speedHigh는 speedRate가 1일때 speedLow랑 같고 크면 클수록 속도가 빨라진다(but player속도보단 항상 작음)
                     float speedHigh = playerVelocityX - ((playerVelocityX - speedLow) / speedRate);
 
-                    
+                    //속도가 빠른 Enemy가 속도가 느린 Enemy를 추월하는 위치(0[플레이어위치] ~ 1[화면 오른쪽])
+                    float passingPoint = 0.7f;
 
+                    Vector3 spawnPos = player.transform.position;
+
+                    spawnPos.x += spawnMargin;
+
+                    CreateEnemyGroup(spawnPos, speedHigh ,EnemyGroup.eAIState.NORMAL);
+
+                    //느린Enemy의 spawn지점 passingPoint가 0에 가까울수록 멀리 spawn되서 늦게 교차됨
+                    spawnPos.x = player.transform.position.x + (spawnMargin * Mathf.Lerp(speedRate, 1.0f, passingPoint));
+                    CreateEnemyGroup(spawnPos,speedLow, EnemyGroup.eAIState.NORMAL);
                 }
                 break;
             case eGroupType.RAPID:
@@ -314,8 +327,8 @@ public class LevelControl : MonoSingleton<LevelControl>
 
         //지면에 닿는 높이
         spawnPos.y += EnemyGroup.collisionSize / 2.0f; //콜리전 사이즈만큼 띄워야 콜리전과 지면이 맞닿음
-   
 
+        newGroup.enemyPrefabs = enemyPrefabs;
         newGroup.transform.position = spawnPos;
         newGroup.gameManager = this.gameManager;
         newGroup.mainCamera = this.mainCamera;
@@ -340,10 +353,6 @@ public class LevelControl : MonoSingleton<LevelControl>
 
 
 	
-	// Update is called once per frame
-	void Update ()
-    {
-		
-	}
+	
 
 }

@@ -15,7 +15,7 @@ public class EnemyGroup : MonoBehaviour
     public GameManager gameManager= null;
 
     //Enemy 프리팹
-    public GameObject[] enemyPrefab;
+    public GameObject[] enemyPrefabs;
 
     //Group 하위의 각각의 적들의 EnemyScript들의 배열
     public Enemy[] enemyComponents;
@@ -69,7 +69,7 @@ public class EnemyGroup : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        
+        enemyPrefabs = GameManager.Instance.enemyPrefabs;
         //decelerate 초기화
         decelerate.isActive = false; //감속중 x
         decelerate.timer = 0.0f;
@@ -240,7 +240,9 @@ public class EnemyGroup : MonoBehaviour
         for(int i = 0; i < enemyCount; i++)
         {
             //enemyPrefab배열의 길이를 넘으면 안되므로 배열 길이와 나머지연산
-            GameObject go = Instantiate(enemyPrefab[i % enemyPrefab.Length]) as GameObject;
+            if (enemyPrefabs.Length == 0)
+                Debug.Log("enemyPrefabs의 길이가 0입니다.");
+            GameObject go = Instantiate(enemyPrefabs[i % enemyPrefabs.Length]) as GameObject;
             enemyComponents[i] = go.GetComponent<Enemy>();
 
             //적의 생성위치를 흩어지게 한다
@@ -283,7 +285,7 @@ public class EnemyGroup : MonoBehaviour
     }
 
     //플레이어의 공격을 받았을 때
-    void HitByPlayer()
+    public void HitByPlayer()
     {
         ////SceneControl에서 쓰러진 도깨비 수를 늘린다.
 

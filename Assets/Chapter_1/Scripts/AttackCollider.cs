@@ -2,15 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackCollider : MonoBehaviour {
+public class AttackCollider : MonoBehaviour
+{
+    public Ch1_Player owner;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    //공격 판정 가능
+    bool isAttackEnabled = false;
+
+    private void OnTriggerStay(Collider other)
+    {
+        if(isAttackEnabled && other.tag == "EnemyGroup")
+        {
+            EnemyGroup enemyGroup = other.GetComponent<EnemyGroup>();
+
+            if(enemyGroup != null)
+            {
+                //공격 성공시 처리
+                enemyGroup.HitByPlayer();
+                owner.ResetAttackDisableTimer();
+            }
+        }
+    }
+
+    public void SetAttackEnabled(bool bState)
+    {
+        isAttackEnabled = bState;
+    }
 }
