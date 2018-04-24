@@ -69,7 +69,7 @@ public class Ch1_Player : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-
+        playerAnimator.speed = Map.Instance.speed * 0.1f;
 
   //      //ProtoType
   //      playerAnimator.speed = moveSpeed * 5.0f;

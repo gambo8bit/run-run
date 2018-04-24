@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Map : MonoBehaviour
+public class Map : MonoSingleton<Map>
 {
     float mapWidth;
     float floorWidth;
     FloorControl[] floors;
-    float speed = 10;
+    public float speed = 5;
     int count = 0;
 
     Vector3 changePos;
@@ -26,7 +26,14 @@ public class Map : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        if (count == 3)
+        speed += 1f * Time.deltaTime;
+
+        Vector3 newPos = transform.position;
+        newPos.x -= speed * Time.deltaTime;
+        transform.position = newPos;
+
+
+        if (count == floors.Length)
             count = 0;
 
         if(changePos.x >= transform.position.x)
@@ -35,10 +42,6 @@ public class Map : MonoBehaviour
             changePos.x -= floorWidth; 
             count++;
         }
-        Vector3 newPos = transform.position;
-        newPos.x -= speed * Time.deltaTime;
-
-        transform.position = newPos;
 
 
 	}

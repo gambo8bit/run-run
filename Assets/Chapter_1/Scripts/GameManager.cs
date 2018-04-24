@@ -8,11 +8,14 @@ public class GameManager : MonoSingleton<GameManager>
     public  GameObject enemyGroupPrefab;
     public GameObject[] enemyPrefabs;
     public GameObject playerPrefab;
+    
 
     //=========== 인스턴스 참조===============
     public GameObject mainCamera; //카메라
 
     public LevelControl levelControl; //레벨컨트롤
+
+    public SoundManager soundManager;
 
     public Ch1_Player player;
 
@@ -85,6 +88,8 @@ public class GameManager : MonoSingleton<GameManager>
         levelControl.enemyGroupPrefab = enemyGroupPrefab;
         levelControl.mainCamera = mainCamera;
         levelControl.Init();
+
+        soundManager = SoundManager.Instance;
 
         stepNext = STEP.START;
         

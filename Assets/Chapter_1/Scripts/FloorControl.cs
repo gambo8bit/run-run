@@ -17,24 +17,24 @@ public class FloorControl : MonoBehaviour
 
     void Update ()
     {
-        //맵의 전체 너비( 1 루프 크기)
-        totalWidth = floorWidth * modelNum;
+        ////맵의 전체 너비( 1 루프 크기)
+        //totalWidth = floorWidth * modelNum;
 
-        //현재 위치
-        Vector3 thisFloorPos = this.transform.position;
+        ////현재 위치
+        //Vector3 thisFloorPos = this.transform.position;
 
-        //캐릭터 위치
-        Vector3 playerPos = Player.transform.position;
+        ////캐릭터 위치
+        //Vector3 playerPos = Player.transform.position;
 
-        //플레이어와 현재 맵의 x 좌표 차이
-        float distX = playerPos.x - thisFloorPos.x;
+        ////플레이어와 현재 맵의 x 좌표 차이
+        //float distX = playerPos.x - thisFloorPos.x;
 
-        //플레이어와 현재 맵의 x 좌표차이가 맵 전체의 루프 단위로 봤을때 몇 루프인지 계산
-        int loopNum = Mathf.RoundToInt(distX / totalWidth);
+        ////플레이어와 현재 맵의 x 좌표차이가 맵 전체의 루프 단위로 봤을때 몇 루프인지 계산
+        //int loopNum = Mathf.RoundToInt(distX / totalWidth);
 
-        if(playerPos.x > thisFloorPos.x + totalWidth * 0.5f)
-        {
-            this.transform.position = thisFloorPos + new Vector3(totalWidth * loopNum ,0,0);
-        }
+        //if(playerPos.x > thisFloorPos.x + totalWidth * 0.5f)
+        //{
+        //    this.transform.position = thisFloorPos + new Vector3(totalWidth * loopNum ,0,0);
+        //}
 	}
 }
