@@ -7,11 +7,11 @@ public class Map : MonoSingleton<Map>
     float mapWidth;
     float floorWidth;
     FloorControl[] floors;
-    public float speed = 5;
+    public float speed = 1;
     int count = 0;
 
     Vector3 changePos;
-    
+    float speedMax = 20f;
     
 	// Use this for initialization
 	void Start ()
@@ -26,6 +26,7 @@ public class Map : MonoSingleton<Map>
 	// Update is called once per frame
 	void Update ()
     {
+        if(speed < speedMax)
         speed += 1f * Time.deltaTime;
 
         Vector3 newPos = transform.position;

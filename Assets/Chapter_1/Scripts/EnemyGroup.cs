@@ -42,7 +42,7 @@ public class EnemyGroup : MonoBehaviour
     public static float SPEEDLEAVE = 10.0f; //퇴장 속도
     public float currentMoveSpeed = SPEEDMIN; //현재 Enemy 그룹 전체의 이동속도
 
-    
+   public List<SignAnimation> signList;
     
     //=====================AI=================
     public enum eAIState
@@ -65,30 +65,105 @@ public class EnemyGroup : MonoBehaviour
     }
     public Decelerate decelerate; //속도감속상태의 정보 구조체의 인스턴스
 
+    public float bpmDelayInverse = 0f;
 
+    public Vector3 spawnPos;
+
+    public float hitAccuracy = 0f; //1에 근접할수록 가장 정확
     // Use this for initialization
+    private void Awake()
+    {
+        
+    }
+
     void Start ()
     {
         enemyPrefabs = GameManager.Instance.enemyPrefabs;
         //decelerate 초기화
         decelerate.isActive = false; //감속중 x
         decelerate.timer = 0.0f;
-	}
+
+        bpmDelayInverse = 1f / SoundManager.Instance.fourNoteTime;
+
+        signList = new List<SignAnimation>();
+    }
 
     private void FixedUpdate()
     {
     }
+    float timingTimer = 0f;
+    float speed = 0.5f;
 
+    IEnumerator CameraZoomEffect()
+    {
+        Vector3 orgPos = Camera.main.transform.position;
+        Vector3 newPos = orgPos + new Vector3(0, 0, 10);
+        float sixteenNoteInverse = 1f / SoundManager.Instance.sixteenNoteTime;
+        float time = 0;
 
+        //ZOOM
+        while (true)
+        {
+            time += Time.fixedDeltaTime;
+            float timing = time * sixteenNoteInverse;
+            Camera.main.transform.position = Vector3.Lerp(orgPos,newPos,timing);
+
+            if (timing >= 1)
+            {
+                time = 0f;
+                break;
+            }
+            yield return new WaitForSeconds(0.01f);
+        }
+        //FADE OUT
+        while (true)
+        {
+            time += Time.fixedDeltaTime;
+            float timing = time * sixteenNoteInverse;
+            Camera.main.transform.position = Vector3.Lerp(newPos, orgPos, timing);
+
+            if (timing >= 1)
+                break;
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        yield return null;
+    }
+
+    void Move()
+    {
+        ////이동 처리
+        //Vector3 newPosition = this.transform.position;
+
+        //newPosition.x -= currentMoveSpeed * Time.deltaTime;
+        //this.transform.position = newPosition;
+        if (currentAIType != eAIState.LEAVE)
+        {
+            timingTimer += Time.deltaTime * speed;
+            hitAccuracy = bpmDelayInverse * timingTimer;
+            Vector3 newPos = Vector3.Lerp(spawnPos, player.attackCol.transform.position,hitAccuracy);
+            transform.position = newPos;
+            if (hitAccuracy >= 1f)
+            {
+               StartCoroutine(CameraZoomEffect()) ; //zoom 이펙트
+                currentAIType = eAIState.LEAVE;
+                foreach(Enemy enemy in enemyComponents)
+                {
+                    enemy.Leave();
+                }
+                timingTimer = 0f;
+            }
+        }
+        else
+        {
+            transform.position += new Vector3(currentMoveSpeed * Time.deltaTime,0,0);
+        }
+    }
     void Update ()
     {
         SpeedControl();
-        
-        //이동 처리
-        Vector3 newPosition = this.transform.position;
 
-        newPosition.x += currentMoveSpeed * Time.deltaTime;
-        this.transform.position = newPosition;
+        Move();
 
         //퇴장모드일때 화면 안인지 밖인지 체크해서 밖이면 삭제처리
         if(currentAIType == eAIState.LEAVE)
@@ -98,7 +173,7 @@ public class EnemyGroup : MonoBehaviour
             //현재 enemy들의 렌더링 여부 검사
             foreach(Enemy enemy in enemyComponents)
             {
-                if(enemy.GetComponent<Renderer>().isVisible) //Rendering 하고 있는가
+                if(enemy.GetComponentInChildren<Renderer>().isVisible) //Rendering 하고 있는가
                 {
                     //하나의 enemy 라도 현재 화면에 렌더링 중이라면 검사 종료
                     isVisible = true;
@@ -217,7 +292,7 @@ public class EnemyGroup : MonoBehaviour
             case eAIState.LEAVE:
                 {
                     //플레이어에게 절때 추격당하지 않도록 플레이어 속도를 더한다.
-                    currentMoveSpeed = SPEEDLEAVE + player.moveSpeed;
+                    currentMoveSpeed = SPEEDLEAVE ;
 
                 }
                 break;
@@ -284,9 +359,16 @@ public class EnemyGroup : MonoBehaviour
 
     }
 
+    IEnumerator death()
+    {
+        yield return new WaitForSeconds(0.2f);
+        Destroy(this.gameObject);
+    }
     //플레이어의 공격을 받았을 때
     public void HitByPlayer()
     {
+
+        StartCoroutine(death());
         ////SceneControl에서 쓰러진 도깨비 수를 늘린다.
 
         ////원뿔모양 방향으로 도깨비가 날아가는 방향을 정한다.

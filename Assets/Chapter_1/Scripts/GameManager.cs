@@ -77,9 +77,12 @@ public class GameManager : MonoSingleton<GameManager>
         enemyPrefabs[2] = goEnemy2;
 
         //스크립트 인스턴스화 및 링크
+        soundManager = SoundManager.Instance;
+
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Ch1_Player>();
         player.gameManager = this;
         mainCamera = Camera.main.gameObject;
+
 
         levelControl = LevelControl.Instance;
         levelControl.enemyPrefabs = enemyPrefabs;
@@ -87,9 +90,9 @@ public class GameManager : MonoSingleton<GameManager>
         levelControl.player = player;
         levelControl.enemyGroupPrefab = enemyGroupPrefab;
         levelControl.mainCamera = mainCamera;
+        levelControl.soundManager = soundManager; 
         levelControl.Init();
 
-        soundManager = SoundManager.Instance;
 
         stepNext = STEP.START;
         

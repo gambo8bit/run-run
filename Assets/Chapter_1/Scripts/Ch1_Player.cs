@@ -10,7 +10,7 @@ public class Ch1_Player : MonoBehaviour
     //애니메이터
     public Animator playerAnimator = null;
     //공격 판정용 Collider
-    AttackCollider attackCol = null;
+   public AttackCollider attackCol = null;
     //게임매니저 참조
     public GameManager gameManager = null;
     
@@ -58,6 +58,7 @@ public class Ch1_Player : MonoBehaviour
        playerAnimator = GetComponentInChildren<Animator>();
         attackCol = GameObject.FindGameObjectWithTag("AttackCollider").GetComponent<AttackCollider>();
         attackCol.owner = this;
+        nextAI = ePlayerAIState.RUN;
 	}
 	
 
@@ -69,35 +70,92 @@ public class Ch1_Player : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            attackCol.isAttackEnabled = true;
+        }
+
+
+        //배경의 이동속도와 플레이어 달리기 모션을 동기화
         playerAnimator.speed = Map.Instance.speed * 0.1f;
 
-  //      //ProtoType
-  //      playerAnimator.speed = moveSpeed * 5.0f;
 
-  //      if (Input.GetKey(KeyCode.LeftShift))
-  //      {
-  //          moveSpeed += addSpeed;
-  //      }
+        //AI
 
-  //      if(Input.GetKey(KeyCode.LeftControl))
-  //      {
-  //          moveSpeed += -addSpeed;
-  //      }
-		//if(Input.GetKey(KeyCode.D))
-  //      {
-  //          this.transform.position += Vector3.right * moveSpeed;
-  //      }
+        //다음 AI로 넘어가야 되는지 체크
+        if (nextAI == ePlayerAIState.NONE)
+        {
+            switch (playerAI)
+            {
+                
+                case ePlayerAIState.RUN:
+                    {
+                        if(!bIsRunning) //뛰고있는 상태가 아니면
+                        {
+                            nextAI = ePlayerAIState.STOP; //다음 AI 멈추기 처리
+                        }
+                    }
+                    break;
+                case ePlayerAIState.HIT:
+                    break;
+                
+            }
+        }
 
-  //      if(Input.GetKey(KeyCode.A))
-  //      {
-  //          transform.position += -Vector3.right * moveSpeed;
-  //      }
+            //다음 AI로 넘어가기전 추가처리 해야되는 AI 추가처리 
+            if (nextAI != ePlayerAIState.NONE)
+        {
+            switch (nextAI)
+            {
 
-  //      if (Input.GetKeyDown(KeyCode.W))
-  //          transform.position += Vector3.right * 10000;
-	}
+                case ePlayerAIState.STOP:
+                    {
+                        //멈추는 애니메이션 처리
 
-    public void StopRequest()
+                    }
+                    break;
+                case ePlayerAIState.HIT:
+                    {
+
+                    }
+                    break;
+            }
+
+            playerAI = nextAI;
+            nextAI = ePlayerAIState.NONE;
+        }
+
+
+
+
+            //      //ProtoType
+            //      playerAnimator.speed = moveSpeed * 5.0f;
+
+            //      if (Input.GetKey(KeyCode.LeftShift))
+            //      {
+            //          moveSpeed += addSpeed;
+            //      }
+
+            //      if(Input.GetKey(KeyCode.LeftControl))
+            //      {
+            //          moveSpeed += -addSpeed;
+            //      }
+            //if(Input.GetKey(KeyCode.D))
+            //      {
+            //          this.transform.position += Vector3.right * moveSpeed;
+            //      }
+
+            //      if(Input.GetKey(KeyCode.A))
+            //      {
+            //          transform.position += -Vector3.right * moveSpeed;
+            //      }
+
+            //      if (Input.GetKeyDown(KeyCode.W))
+            //          transform.position += Vector3.right * 10000;
+        }
+
+        public void StopRequest()
     {
         bIsRunning = false; 
     }
@@ -125,8 +183,8 @@ public class Ch1_Player : MonoBehaviour
         attackDisableTimer = 0.0f;
     }
 
-    //bool IsAttackInput()
-    //{
+        //bool IsAttackInput()
+        //{
 
-    //}
+        //}
 }

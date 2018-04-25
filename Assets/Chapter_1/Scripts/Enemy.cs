@@ -17,7 +17,10 @@ public class Enemy : MonoBehaviour
     public float waveAmplitude = 0.5f;
     
     
-    
+    public void Leave()
+    {
+        GetComponentInChildren<Animator>().speed *= 5f;
+    }
     void Start ()
     {
 		

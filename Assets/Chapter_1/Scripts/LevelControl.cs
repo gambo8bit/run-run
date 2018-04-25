@@ -14,9 +14,13 @@ public class LevelControl : MonoSingleton<LevelControl>
 
     public GameManager gameManager = null;
 
+    public Map map = null;
+
     public GameObject mainCamera = null;
 
     public GameObject[] enemyPrefabs;
+
+    public SoundManager soundManager = null;
     //도깨비 발생위치(플레이어의 x좌표가 기준선을 넘으면 플레이어의 앞쪽에 도깨비 출현 시키도록)
     public float enemySpawnLine;
 
@@ -68,6 +72,8 @@ public class LevelControl : MonoSingleton<LevelControl>
     {
         //게임 첫 시작시 적이 출현할수 있도록 플레이어 약간 뒤를 리스폰지점으로 초기화
         this.enemySpawnLine = this.player.transform.position.x - 1.0f;
+
+        map = Map.Instance;
     }
 
     bool bCanCreateEnemy = false;
@@ -75,9 +81,10 @@ public class LevelControl : MonoSingleton<LevelControl>
     float nextSpawnLine = 40f;
 
 
-
+    float bpmTimer = 0;
     public void CheckCreate()
     {
+        bpmTimer += Time.deltaTime;
         if (!bCanCreateEnemy)
         {
 
@@ -98,9 +105,9 @@ public class LevelControl : MonoSingleton<LevelControl>
             if (bCanCreateEnemy)
             {
                 if (groupType == eGroupType.NORMAL)
-                    startSpawnLine = player.transform.position.x + nextSpawnLine;
+                    startSpawnLine = map.transform.position.x - nextSpawnLine;
                 else //특별 패턴은 빠른 간격으로 생성
-                    startSpawnLine = player.transform.position.x + LevelControl.SPWAN_MARGIN_MIN * 0.5f;
+                    startSpawnLine = map.transform.position.x - LevelControl.SPWAN_MARGIN_MIN * 0.5f;
             }
 
 
@@ -121,8 +128,11 @@ public class LevelControl : MonoSingleton<LevelControl>
                     break;
 
                 //생성시작지점 플레이어가 아직 지나가지않았다면 실행 x
-                if (player.transform.position.x <= startSpawnLine)
+                if (map.transform.position.x > startSpawnLine)
                     break;
+
+            if (bpmTimer < soundManager.fourNoteTime)
+                break;
 
                 groupType = groupTypeNext;
 
@@ -158,7 +168,8 @@ public class LevelControl : MonoSingleton<LevelControl>
 
 
 
-
+        if (bpmTimer >= SoundManager.Instance.fourNoteTime)
+            bpmTimer = 0f;
 
 
     }
@@ -189,7 +200,7 @@ public class LevelControl : MonoSingleton<LevelControl>
 
             if(normalCount <= 0)
             {
-                eventType = (eGroupType)Random.Range(0, 3);
+                eventType = (eGroupType)3/*Random.Range(0, 3)*/;
                 int runNum = (int)Random.Range(1,2);
                 switch (eventType)
                 {
@@ -330,6 +341,7 @@ public class LevelControl : MonoSingleton<LevelControl>
 
         newGroup.enemyPrefabs = enemyPrefabs;
         newGroup.transform.position = spawnPos;
+        newGroup.spawnPos = spawnPos;
         newGroup.gameManager = this.gameManager;
         newGroup.mainCamera = this.mainCamera;
         newGroup.player = this.player;
