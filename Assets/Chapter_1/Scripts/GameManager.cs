@@ -62,7 +62,8 @@ public class GameManager : MonoSingleton<GameManager>
     public int enemyKillCount = 0; //죽인수
     public int enemyMissCount = 0; //못잡은수
 
-
+    
+    
     void Start()
     {
         //프리팹 로드
@@ -76,6 +77,7 @@ public class GameManager : MonoSingleton<GameManager>
         enemyPrefabs[1] = goEnemy1;
         enemyPrefabs[2] = goEnemy2;
 
+
         //스크립트 인스턴스화 및 링크
         soundManager = SoundManager.Instance;
 
@@ -83,6 +85,16 @@ public class GameManager : MonoSingleton<GameManager>
         player.gameManager = this;
         mainCamera = Camera.main.gameObject;
 
+        GameObject[] tempPrefabs = new GameObject[3];
+        for (int i = 0; i < 3; i++)
+        {
+           tempPrefabs[i] = Instantiate(enemyPrefabs[i],mainCamera.transform.position,Quaternion.identity)as GameObject;
+
+        }
+        for(int i = 0; i < 3; i++)
+        {
+            Destroy(tempPrefabs[i]);
+        }
 
         levelControl = LevelControl.Instance;
         levelControl.enemyPrefabs = enemyPrefabs;
@@ -101,6 +113,7 @@ public class GameManager : MonoSingleton<GameManager>
 	
 	void Update ()
     {
+        
         stepTimerPrev = stepTimer;
         stepTimer += Time.deltaTime;
 
@@ -240,7 +253,12 @@ public class GameManager : MonoSingleton<GameManager>
 
         //현재 진행상태가 게임상태면 계속하여 Enemy생성해도 되는지 체크 
         if (stepCurrent == STEP.GAME)
-            levelControl.CheckCreate();
+        {
+            if (!soundManager.bIsMusicOn)
+                soundManager.PlayBackgroundMusic();
+
+                levelControl.CheckCreate();
+        }
 
 
 
@@ -248,5 +266,51 @@ public class GameManager : MonoSingleton<GameManager>
 
 
 
+    }
+
+
+    bool bIsCameraEffectReady = true;
+    public void StartCameraEffect()
+    {
+        if (bIsCameraEffectReady)
+            StartCoroutine(CameraZoomEffect());
+    }
+    //적이 캐릭터 앞에 도착하는 타이밍에 카메라 줌 효과
+    IEnumerator CameraZoomEffect()
+    {
+        bIsCameraEffectReady = false;
+        Vector3 orgPos = Camera.main.transform.position;
+        Vector3 newPos = orgPos + new Vector3(0, 0, 10);
+        float sixteenNoteInverse = 1f / SoundManager.Instance.sixteenNoteTime;
+        float time = 0;
+
+        //ZOOM
+        while (true)
+        {
+            time += Time.fixedTime * 0.01f;
+            float timing = time * sixteenNoteInverse;
+            Camera.main.transform.position = Vector3.Lerp(orgPos, newPos, timing);
+
+            if (timing >= 1f)
+            {
+                time = 0f;
+                break;
+            }
+            yield return new WaitForEndOfFrame();
+        }
+        //FADE OUT
+        while (true)
+        {
+            time += Time.fixedTime * 0.01f;
+            float timing = time * sixteenNoteInverse;
+            Camera.main.transform.position = Vector3.Lerp(newPos, orgPos, timing);
+
+            if (timing >= 1f)
+                break;
+            yield return new WaitForEndOfFrame(); 
+        }
+        Camera.main.transform.position = orgPos;
+        bIsCameraEffectReady = true;
+        yield return null;
     }
 }

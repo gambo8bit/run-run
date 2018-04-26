@@ -80,6 +80,8 @@ public class Ch1_Player : MonoBehaviour
         //배경의 이동속도와 플레이어 달리기 모션을 동기화
         playerAnimator.speed = Map.Instance.speed * 0.1f;
 
+        if (playerAnimator.speed > 0.1f)
+            playerAnimator.SetInteger("State", 1);
 
         //AI
 

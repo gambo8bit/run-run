@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - EnemyGroup
   - AttackCollider
+  - SoundTiming
   layers:
   - Default
   - TransparentFX

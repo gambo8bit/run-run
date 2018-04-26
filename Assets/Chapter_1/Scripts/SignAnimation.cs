@@ -21,6 +21,7 @@ public class SignAnimation : MonoBehaviour {
         myNumber = signCount;
         
         enemyGroup = GetComponentInParent<EnemyGroup>();
+        enemyGroup.sign = this;
         
 
         transform.parent = GameObject.FindGameObjectWithTag("Player").transform;
