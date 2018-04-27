@@ -42,7 +42,7 @@ public class SignAnimation : MonoBehaviour {
         //애니메이션
 
 
-        sixteenNote = 1f/SoundManager.Instance.sixteenNoteTime;
+        //sixteenNote = 1f/SoundManager.Instance.sixteenNoteTime;
     }
 
 	void Update ()

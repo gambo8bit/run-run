@@ -13,8 +13,9 @@ public class Ch1_Player : MonoBehaviour
    public AttackCollider attackCol = null;
     //게임매니저 참조
     public GameManager gameManager = null;
-    
-    
+
+    public AnimatorClipInfo[] animationClips;
+    public AnimationClip runAniClip;
     //==========Value====================
     //이동 속도
     public float moveSpeed = 0.1f;
@@ -51,11 +52,20 @@ public class Ch1_Player : MonoBehaviour
     public ePlayerAIState nextAI = ePlayerAIState.NONE;
     
     bool bIsRunning = true;
-    
+
+    float orgAnimatorSpeed;
     // Use this for initialization
 	void Start ()
     {   
        playerAnimator = GetComponentInChildren<Animator>();
+        orgAnimatorSpeed = playerAnimator.speed;
+        //animationClips = playerAnimator.GetCurrentAnimatorClipInfo(0);
+        //for(int i = 0; i < animationClips.Length; i++)
+        //{
+        //    if(animationClips[i].clip.name == "Run")
+        //        runAniClip = animationClips[i].clip;
+
+        //}
         attackCol = GameObject.FindGameObjectWithTag("AttackCollider").GetComponent<AttackCollider>();
         attackCol.owner = this;
         nextAI = ePlayerAIState.RUN;
@@ -73,15 +83,22 @@ public class Ch1_Player : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            attackCol.isAttackEnabled = true;
+            SoundManager.Instance.PlayAudio(SoundManager.Instance.attackEffectSound, 1f);
+            
+            playerAnimator.speed = orgAnimatorSpeed;
+            playerAnimator.SetInteger("State", 2);
+            
         }
-
-
+        
+       if(playerAnimator.GetInteger("State") != 2)
+        {
         //배경의 이동속도와 플레이어 달리기 모션을 동기화
         playerAnimator.speed = Map.Instance.speed * 0.1f;
 
         if (playerAnimator.speed > 0.1f)
             playerAnimator.SetInteger("State", 1);
+
+        }
 
         //AI
 

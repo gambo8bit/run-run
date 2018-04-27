@@ -131,7 +131,7 @@ public class LevelControl : MonoSingleton<LevelControl>
                 if (map.transform.position.x > startSpawnLine)
                     break;
 
-            if (bpmTimer < soundManager.fourNoteTime)
+            if (!TimeManager.Instance.bIsTiming)
                 break;
 
                 groupType = groupTypeNext;

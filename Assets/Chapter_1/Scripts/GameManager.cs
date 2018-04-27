@@ -66,6 +66,7 @@ public class GameManager : MonoSingleton<GameManager>
     
     void Start()
     {
+        
         //프리팹 로드
         playerPrefab = Resources.Load("Player") as GameObject;
         enemyGroupPrefab = Resources.Load("Enemy/EnemyGroupBox") as GameObject;
@@ -91,10 +92,8 @@ public class GameManager : MonoSingleton<GameManager>
            tempPrefabs[i] = Instantiate(enemyPrefabs[i],mainCamera.transform.position,Quaternion.identity)as GameObject;
 
         }
-        for(int i = 0; i < 3; i++)
-        {
-            Destroy(tempPrefabs[i]);
-        }
+        StartCoroutine(TempPrefabsDestroy(tempPrefabs));
+        
 
         levelControl = LevelControl.Instance;
         levelControl.enemyPrefabs = enemyPrefabs;
@@ -109,7 +108,19 @@ public class GameManager : MonoSingleton<GameManager>
         stepNext = STEP.START;
         
 	}
-	
+
+    //게임 start시 미리 프리팹 인스턴스화 한거(한번이라도 인스턴스화 했었어야 다음 인스턴스화할때 빠르므로) 제거
+    IEnumerator TempPrefabsDestroy(GameObject[] tempPrefabs) 
+    {
+        yield return new WaitForSeconds(1f); //프리팹이 인스턴스화 완료되었을 충분한 시간 기다린후 삭제 진행
+
+        for(int i = 0; i < tempPrefabs.Length; i++)
+        {
+            Destroy(tempPrefabs[i]);
+        }
+        yield return null;
+
+    }
 	
 	void Update ()
     {
@@ -255,7 +266,7 @@ public class GameManager : MonoSingleton<GameManager>
         if (stepCurrent == STEP.GAME)
         {
             if (!soundManager.bIsMusicOn)
-                soundManager.PlayBackgroundMusic();
+                soundManager.PlayAudio(soundManager.music,0f);
 
                 levelControl.CheckCreate();
         }
@@ -281,7 +292,7 @@ public class GameManager : MonoSingleton<GameManager>
         bIsCameraEffectReady = false;
         Vector3 orgPos = Camera.main.transform.position;
         Vector3 newPos = orgPos + new Vector3(0, 0, 10);
-        float sixteenNoteInverse = 1f / SoundManager.Instance.sixteenNoteTime;
+        float sixteenNoteInverse = 1f / (SoundManager.Instance.fourNoteTime * 0.25f);
         float time = 0;
 
         //ZOOM

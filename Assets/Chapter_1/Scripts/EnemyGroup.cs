@@ -21,6 +21,8 @@ public class EnemyGroup : MonoBehaviour
     public Enemy[] enemyComponents;
 
     public SignAnimation sign;
+
+    
     //======================================
 
 
@@ -91,8 +93,8 @@ public class EnemyGroup : MonoBehaviour
     {
     }
 
-    
 
+    float timingMargin = 0f;
     void Move()
     {
         ////이동 처리
@@ -103,12 +105,13 @@ public class EnemyGroup : MonoBehaviour
         if (currentAIType != eAIState.LEAVE)
         {
             timingTimer += Time.deltaTime /** speed*/;
-            hitAccuracy = bpmDelayInverse * timingTimer;
+            timingMargin = 0f;
+            hitAccuracy = bpmDelayInverse * timingTimer - timingMargin;
             Vector3 newPos = Vector3.Lerp(spawnPos, player.attackCol.transform.position,hitAccuracy);
             transform.position = newPos;
-            if (hitAccuracy >= 1f)
+            if (hitAccuracy >= 1f && !TimeManager.Instance.bIsTiming)
             {
-                gameManager.StartCameraEffect();
+                
                 currentAIType = eAIState.LEAVE;
                 foreach(Enemy enemy in enemyComponents)
                 {
@@ -333,11 +336,36 @@ public class EnemyGroup : MonoBehaviour
 
     }
 
-    
+    IEnumerator Dead()
+    {
+        yield return new WaitForEndOfFrame();
+        float timer = 0f;
+        Vector3 orgPos = transform.position;
+        while(true)
+        {
+            timer += Time.fixedUnscaledDeltaTime;
+            float timing = timer * SoundManager.Instance.inverseFourNoteTime;
+            transform.position = Vector3.Lerp(orgPos, orgPos + new Vector3(0, 10, 0), timing);
+            transform.Rotate(new Vector3(0, 0, 1));
+
+            if(timing >= 1f)
+            break;
+
+            yield return new WaitForEndOfFrame();
+        }
+
+
+         Destroy(this.gameObject);
+        
+    }
+   
     //플레이어의 공격을 받았을 때
     public void HitByPlayer()
     {
-        Destroy(this.gameObject);
+        Destroy(transform.GetComponent<BoxCollider>());
+        StartCoroutine(Dead());
+
+        
 
         
         ////SceneControl에서 쓰러진 도깨비 수를 늘린다.
