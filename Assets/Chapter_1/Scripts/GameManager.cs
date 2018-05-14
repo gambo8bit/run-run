@@ -266,7 +266,10 @@ public class GameManager : MonoSingleton<GameManager>
         if (stepCurrent == STEP.GAME)
         {
             if (!soundManager.bIsMusicOn)
-                soundManager.PlayAudio(soundManager.music,0f);
+            {
+                soundManager.PlayAudio(soundManager.music,0.7f);
+                soundManager.bIsMusicOn = true;
+            }
 
                 levelControl.CheckCreate();
         }

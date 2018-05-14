@@ -35,7 +35,7 @@ public class AttackCollider : MonoBehaviour
             {
                 //공격 성공시 처리
                 
-                SoundManager.Instance.PlayAudio(SoundManager.Instance.audiosourceHit, 1f);
+                SoundManager.Instance.PlayAudio(SoundManager.Instance.audiosourceHit, 0.7f);
                 
                 enemyGroup.HitByPlayer();
                 owner.ResetAttackDisableTimer();

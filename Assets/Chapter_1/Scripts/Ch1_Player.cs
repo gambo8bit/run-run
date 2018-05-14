@@ -81,7 +81,7 @@ public class Ch1_Player : MonoBehaviour
 	void Update ()
     {
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
         {
             SoundManager.Instance.PlayAudio(SoundManager.Instance.attackEffectSound, 1f);
             

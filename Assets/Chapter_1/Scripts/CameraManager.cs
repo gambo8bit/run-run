@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraManager : MonoSingleton<CameraManager>
+public class CameraManager : MonoBehaviour
 {
     Vector3 orgPos;
     bool bIsReadyCoroutine = true;
+    public uint speed = 1;
+    
 	// Use this for initialization
 	void Start ()
     {
-        orgPos = transform.position;	
+        orgPos = transform.position;
+        
 	}
     float timer = 0f;
 	// Update is called once per frame
@@ -57,7 +60,7 @@ public class CameraManager : MonoSingleton<CameraManager>
         while (true)
         {
             time += Time.fixedUnscaledDeltaTime;
-            float timing = time * sixteenNoteInverse * 2f;
+            float timing = time * sixteenNoteInverse * speed;
             Camera.main.transform.position = Vector3.Lerp(orgPos, newPos, timing);
 
             if (timing >= 1f)
@@ -71,7 +74,7 @@ public class CameraManager : MonoSingleton<CameraManager>
         while (true)
         {
             time += Time.fixedUnscaledDeltaTime;
-            float timing = time * sixteenNoteInverse * 2f;
+            float timing = time * sixteenNoteInverse * speed;
             Camera.main.transform.position = Vector3.Lerp(newPos, orgPos, timing);
 
             if (timing >= 1f)

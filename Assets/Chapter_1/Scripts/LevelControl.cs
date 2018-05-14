@@ -25,7 +25,8 @@ public class LevelControl : MonoSingleton<LevelControl>
     public float enemySpawnLine;
 
     //리스폰위치의 거리(플레이어 기준 얼마나 멀리 둘것이냐)
-    private float spawnMargin = 15.0f;
+    [SerializeField]
+    private float spawnMargin = 40.0f;
     public const float SPAWN_MARGIN_MAX = 50.0f;
     public const float SPWAN_MARGIN_MIN = 20.0f;
 

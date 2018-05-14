@@ -49,6 +49,8 @@ public class SoundManager : MonoSingleton<SoundManager>
 
     int count = 1;
     float intervalTime = 0f;
+
+
     void Update ()
     {
         intervalTime += Time.deltaTime;
@@ -56,23 +58,19 @@ public class SoundManager : MonoSingleton<SoundManager>
         if (music.isPlaying)
             bIsMusicOn = true;
 
+
+        //Debug
         if(bIsMusicOn)
         {
             if(timeManager.bIsTiming && playCount < timeManager.noteCount)
             {
-
+                //Debug(소리 출력으로 박자에 맞춰 bIsTiming이 true가 되는지 확인
                 //PlayAudio(timingChecker, 1f);
-                playCount++;
                 Debug.Log("박자 간격 걸린 시간 :" + intervalTime.ToString());
+                playCount++;
                 intervalTime = 0f;
             }
-            //float timing = count * fourNoteTime * 0.5f;
-            //playTime = music.time;
-
-            //if (playTime >= timing)
-            //{
-            //    count++;
-            //}
+            
 
         }
 
@@ -80,7 +78,8 @@ public class SoundManager : MonoSingleton<SoundManager>
 
     public void PlayAudio(AudioSource audioSource, float volume = 1f)
     {
-        audioSource.PlayOneShot(audioSource.clip,volume);
+        audioSource.volume = volume;
+        audioSource.PlayOneShot(audioSource.clip);
         //music.PlayOneShot(clipBackgroundMusic,0.5f);
         //timingChecker.PlayOneShot(clipTimingChecker, 1f);
 
