@@ -38,7 +38,7 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
         _instance.Init();
     }
 
-    //Init(씬이 바뀌어도 삭제되지않고 오브젝트 유지)
+    //Init(씬이 바뀌어도 삭제되지않고 오브젝트 유지) 기본 싱글톤 설정
     public void Init()
     {
         DontDestroyOnLoad(_instance);
