@@ -9,7 +9,7 @@ public class Map : MonoSingleton<Map>
     FloorControl[] floors;
     public float speed = 1;
     int count = 0;
-
+    public bool bIsTitle = false;
     Vector3 changePos;
     float speedMax = 20f;
     
@@ -26,7 +26,7 @@ public class Map : MonoSingleton<Map>
 	// Update is called once per frame
 	void Update ()
     {
-        if(speed < speedMax)
+        if(speed < speedMax && !bIsTitle)
         speed += 1f * Time.deltaTime;
 
         Vector3 newPos = transform.position;

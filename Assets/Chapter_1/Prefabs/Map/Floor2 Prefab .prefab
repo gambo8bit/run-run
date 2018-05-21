@@ -566,3 +566,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floorWidth: 0
   Player: {fileID: 0}
+  totalWidth: 0

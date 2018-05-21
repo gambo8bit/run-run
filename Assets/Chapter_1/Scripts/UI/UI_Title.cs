@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TitleManager : MonoBehaviour {
+public class UI_Title : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
