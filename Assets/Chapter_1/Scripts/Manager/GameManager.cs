@@ -62,11 +62,14 @@ public class GameManager : MonoSingleton<GameManager>
     public int enemyKillCount = 0; //죽인수
     public int enemyMissCount = 0; //못잡은수
 
+    bool bIsInit = false;
     
-    
-    void Start()
+    public void GameInit()
     {
-        
+        if (bIsInit == true)
+            return;
+
+
         //프리팹 로드
         playerPrefab = Resources.Load("Player") as GameObject;
         enemyGroupPrefab = Resources.Load("Enemy/EnemyGroupBox") as GameObject;
@@ -106,7 +109,8 @@ public class GameManager : MonoSingleton<GameManager>
 
 
         stepNext = STEP.START;
-        
+
+        bIsInit = true;
 	}
 
     //게임 start시 미리 프리팹 인스턴스화 한거(한번이라도 인스턴스화 했었어야 다음 인스턴스화할때 빠르므로) 제거

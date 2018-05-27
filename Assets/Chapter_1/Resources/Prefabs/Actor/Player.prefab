@@ -3471,11 +3471,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerAnimator: {fileID: 0}
+  attackCol: {fileID: 0}
   gameManager: {fileID: 0}
+  runAniClip: {fileID: 0}
   moveSpeed: 0.1
   addSpeed: 0.01
   attackTimer: 0
-  attackDelayTimer: 0
+  attackDisableTimer: 0
   attackTime: 0.3
   attackDelayTime: 1
   playerAI: -1
@@ -3491,6 +3493,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5a7b91339946844a78f1fce75590db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: {fileID: 0}
+  bIsAttackEnabled: 0
 --- !u!124 &124235069441430340
 Behaviour:
   m_ObjectHideFlags: 1

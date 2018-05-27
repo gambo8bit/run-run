@@ -10,6 +10,7 @@ public class UIManager : MonoSingleton<UIManager>
         UI_Title,
         UI_Lobby,
         UI_Stage,
+        UI_Loading,
     }
 
     //UI카메라
@@ -52,7 +53,8 @@ public class UIManager : MonoSingleton<UIManager>
 
         //2.Dictionary에 없어서 여기로 넘어왔다면 UI프리팹 인스턴스화 & Dic에 저장
         GameObject makeUI = null;
-        GameObject prefabUI = Resources.Load("Prefabs/UI/" + uIType.ToString()) as GameObject; //복사할 UI 프리팹
+        //======================데이터 로드=======================
+        GameObject prefabUI = Resources.Load("Prefabs/UI/" + uIType.ToString()) as GameObject; //복사할 UI 프리팹 로드
 
         if(prefabUI != null) //prefabUI를 잘 불러왔다면
         {
@@ -102,6 +104,28 @@ public class UIManager : MonoSingleton<UIManager>
         {
             uiObject.SetActive(true); //활성화시킴   
         }
+    }
+
+    //로딩바는 따로 전달해줘야할 매개변수가 있기에 따로 메소드 생성
+    public void ShowLoadingUI(float progressRate)
+    {
+        GameObject loadingUI = GetUI(eUIType.UI_Loading, true);
+
+        if (loadingUI == null)
+        {
+            Debug.Log("LoadingUI 를 불러오는데 실패했습니다");
+            return;
+        }
+
+        if (loadingUI.activeSelf == false)
+            loadingUI.SetActive(true); //LoadingUI 활성화
+
+        UI_LoadingBar loadingBar = loadingUI.GetComponent<UI_LoadingBar>();
+
+        if(loadingBar != null)
+        loadingBar.SetProgress(progressRate); //진행상태에 따른 로딩바 세팅
+
+
     }
 
     //UI오브젝트에 접근하여 SetActive(false)로 감춤
